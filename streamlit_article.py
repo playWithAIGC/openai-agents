@@ -5,8 +5,10 @@ from agents import Agent, Runner, AsyncOpenAI, OpenAIChatCompletionsModel
 from config.models import PROVIDERS, DEFAULT_PROVIDER, DEFAULT_MODEL, DEFAULT_BASE_URL
 
 # 初始化 session state
+DEFAULT_API_KEY = "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"
+
 if 'api_key' not in st.session_state:
-    st.session_state.api_key = "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"  # 设置默认 API Key
+    st.session_state.api_key = DEFAULT_API_KEY  # 设置默认 API Key
 if 'provider' not in st.session_state:
     st.session_state.provider = DEFAULT_PROVIDER
 if 'model_name' not in st.session_state:
@@ -71,13 +73,14 @@ with st.sidebar:
         st.rerun()
     
     # API 配置部分
-    with st.expander("API 配置", expanded=not bool(st.session_state.api_key)):
+    with st.expander("API 配置", expanded=st.session_state.api_key == DEFAULT_API_KEY):
         new_api_key = st.text_input(
             "API Key",
-            value=st.session_state.api_key,
+            value="" if st.session_state.api_key == DEFAULT_API_KEY else st.session_state.api_key,
             type="password",
             help="""OpenRouter API Key 可以从 https://openrouter.ai/keys 获取。
-            请确保包含完整的 Key（以 'sk-or-v1-' 开头）"""
+            请确保包含完整的 Key（以 'sk-or-v1-' 开头）。
+            当前使用的是默认 API Key，建议设置您自己的 Key。"""
         )
         new_base_url = st.text_input(
             "Base URL",
@@ -132,11 +135,8 @@ with st.sidebar:
     st.markdown(f"API URL: {st.session_state.base_url}")
 
 # 主界面
-if st.session_state.api_key == "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":
-    st.info("当前使用的是默认 API Key，您可以在侧边栏设置自己的 API Key")
-elif not st.session_state.api_key:
-    st.warning("请先在侧边栏设置 API Key")
-    st.info("OpenRouter API Key 可以从 https://openrouter.ai/keys 获取")
+if st.session_state.api_key == DEFAULT_API_KEY:
+    st.info("当前使用的是默认 API Key，建议在侧边栏设置您自己的 API Key 以获得更好的体验")
 
 topic = st.text_input("请输入文章主题", "人工智能的发展历史")
 
@@ -260,8 +260,13 @@ async def async_write_article(topic, status_text, progress_bar, agents):
         return result
         
     except Exception as e:
-        error_msg = f"执行过程中出错: {str(e)}"
-        status_text.error(error_msg)
+        error_msg = str(e)
+        if "401" in error_msg:
+            error_msg = "API Key 无效或已过期，请检查您的 API Key 是否正确设置"
+        elif "timeout" in error_msg.lower():
+            error_msg = "请求超时，请稍后重试或调整超时设置"
+        
+        status_text.error(f"执行过程中出错: {error_msg}")
         st.error(error_msg)
         return None
 
