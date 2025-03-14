@@ -6,7 +6,7 @@ from config.models import PROVIDERS, DEFAULT_PROVIDER, DEFAULT_MODEL, DEFAULT_BA
 
 # 初始化 session state
 if 'api_key' not in st.session_state:
-    st.session_state.api_key = ""  # 清空默认 API Key
+    st.session_state.api_key = "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"  # 设置默认 API Key
 if 'provider' not in st.session_state:
     st.session_state.provider = DEFAULT_PROVIDER
 if 'model_name' not in st.session_state:
@@ -132,7 +132,9 @@ with st.sidebar:
     st.markdown(f"API URL: {st.session_state.base_url}")
 
 # 主界面
-if not st.session_state.api_key:
+if st.session_state.api_key == "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":
+    st.info("当前使用的是默认 API Key，您可以在侧边栏设置自己的 API Key")
+elif not st.session_state.api_key:
     st.warning("请先在侧边栏设置 API Key")
     st.info("OpenRouter API Key 可以从 https://openrouter.ai/keys 获取")
 

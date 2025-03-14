@@ -4,19 +4,13 @@ PROVIDERS = {
         "base_url": "https://openrouter.ai/api/v1/",
         "models": {
             "DeepSeek Chat": "deepseek/deepseek-chat:free",
-            "DeepSeek R1": "deepseek/deepseek-r1:free",
-            "Claude 2": "anthropic/claude-2:free",
-            "GPT-3.5": "openai/gpt-3.5-turbo:free",
+            "DeepSeek R1": "deepseek/deepseek-r1:free",           
             "Gemini Flash Lite": "google/gemini-2.0-flash-lite-preview-02-05:free",
             "Gemini Pro Exp": "google/gemini-2.0-pro-exp-02-05:free",
             "Gemini Flash Thinking": "google/gemini-2.0-flash-thinking-exp:free",
             "Gemini Flash Thinking 1219": "google/gemini-2.0-flash-thinking-exp-1219:free",
             "Gemini Flash": "google/gemini-2.0-flash-exp:free",
-            "Gemma 3 27B": "google/gemma-3-27b-it:free",
-            "Claude 3 Opus": "anthropic/claude-3-opus:free",
-            "Claude 3 Sonnet": "anthropic/claude-3-sonnet:free",
-            "Mistral Medium": "mistral/mistral-medium:free",
-            "Mixtral": "mistralai/mixtral-8x7b:free"
+            "Gemma 3 27B": "google/gemma-3-27b-it:free"          
         }
     },
     "OpenAI": {
