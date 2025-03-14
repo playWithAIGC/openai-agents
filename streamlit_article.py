@@ -5,7 +5,7 @@ from agents import Agent, Runner, AsyncOpenAI, OpenAIChatCompletionsModel
 from config.models import PROVIDERS, DEFAULT_PROVIDER, DEFAULT_MODEL, DEFAULT_BASE_URL
 
 # 初始化 session state
-DEFAULT_API_KEY = "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"
+DEFAULT_API_KEY = "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"
 
 if 'api_key' not in st.session_state:
     st.session_state.api_key = DEFAULT_API_KEY  # 设置默认 API Key
@@ -262,9 +262,11 @@ async def async_write_article(topic, status_text, progress_bar, agents):
     except Exception as e:
         error_msg = str(e)
         if "401" in error_msg:
-            error_msg = "API Key 无效或已过期，请检查您的 API Key 是否正确设置"
+            error_msg = "API 请求失败，可能是由于：\n1. 请求次数超过限制\n2. 服务器暂时不可用\n建议稍后重试或检查 API 配置"
         elif "timeout" in error_msg.lower():
             error_msg = "请求超时，请稍后重试或调整超时设置"
+        elif "rate limit" in error_msg.lower():
+            error_msg = "已达到 API 调用频率限制，请稍后再试"
         
         status_text.error(f"执行过程中出错: {error_msg}")
         st.error(error_msg)
@@ -272,8 +274,8 @@ async def async_write_article(topic, status_text, progress_bar, agents):
 
 # 修改生成文章的按钮处理
 if st.button("生成文章"):
-    if not st.session_state.api_key:
-        st.error("请先设置 API Key")
+    if not st.session_state.api_key and new_api_key:  # 如果用户输入了新的 API key 但还没保存
+        st.error("请点击'保存 API 设置'按钮保存您的 API Key")
     else:
         with st.spinner("正在生成文章..."):
             try:
